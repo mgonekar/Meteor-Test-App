@@ -1,0 +1,36 @@
+{
+  "name": "meteor-boilerplate",
+  "private": true,
+  "scripts": {
+    "start": "meteor run",
+    "test": "meteor test --once --driver-package meteortesting:mocha",
+    "test-app": "cross-env TEST_WATCH=1 meteor test --driver-package meteortesting:mocha",
+    "visualize": "meteor --production --extra-packages bundle-visualizer"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.3.4",
+    "history": "^4.9.0",
+    "meteor-node-stubs": "^0.4.1",
+    "moment": "^2.24.0",
+    "nexmo": "^2.4.1",
+    "random": "^2.1.1",
+    "react": "^16.8.6",
+    "react-addons-pure-render-mixin": "^15.6.2",
+    "react-dom": "^16.8.6",
+    "react-router": "^5.0.0",
+    "react-router-dom": "^5.0.0",
+    "simpl-schema": "^1.5.5"
+  },
+  "meteor": {
+    "mainModule": {
+      "client": "client/main.js",
+      "server": "server/main.js"
+    },
+    "testModule": "tests/main.js"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "enzyme": "^3.10.0",
+    "react-addons-test-utils": "^15.6.2"
+  }
+}

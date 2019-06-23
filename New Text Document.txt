@@ -1,0 +1,19 @@
+meteor remove blaze-html-templates
+meteor add static-html
+meteor npm install simpl-schema
+meteor remove insecure
+ststuscodes.com for http status
+meteor npm install --save clipboard
+meteor add session
+meteor npm install react-modal --save
+meteor add fourseven:scss
+meteor npm install react-flip-move --save
+meteor add practicalmeteor:mocha
+meteor test --driver-package=practicalmeteor:mocha  // to run test
+meteor npm install expect --save-dev //test assrertion library
+meteor npm install --save-dev enzyme react-addons-test-utils 
+meteor npm install --save react-addons-pure-render-mixin
+meteor add react-meteor-data
+
+
+
