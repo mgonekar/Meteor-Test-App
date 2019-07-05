@@ -1,17 +1,26 @@
 import React from 'react';
 import {Link } from "react-router-dom";
-import Meteor from 'meteor/meteor';
+import {Meteor} from 'meteor/meteor';
+import { Router, Route, Switch,Redirect } from 'react-router';
+import { createBrowserHistory } from 'history';
 import {Accounts} from 'meteor/accounts-base';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 
+const browserHistory = createBrowserHistory();
+
+
+import Dashboard from '../ui/Dashboard';
 export default class Otp extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        error: ''
+        error: '',
+        redirect: false
       };
     }
+
+
     
     // componentDidMount() {;
     //     this.otpTraker = Tracker.autorun (() => {
@@ -30,7 +39,7 @@ export default class Otp extends React.Component {
 
     onSubmit(e) {
       e.preventDefault();
-  
+      var resultOtp;
       // let email = this.refs.email.value.trim();
       let otp = this.refs.otp.value.trim();
   
@@ -42,13 +51,27 @@ export default class Otp extends React.Component {
       }
       this.setState({error: ''});
 
-      Meteor.call(findotp, otp, (error, result) => {
+      Meteor.call('find-otp', (error, result) => {
         if(error) {
-          console.log('otp error check', error);
+          console.log('otp find check', error);
         } else {
-          console.log('otp res check', result);
+           resultOtp = result.toString();
+           if(resultOtp === otp) {
+              Meteor.call('update-otp', (error, result) => {
+                if(error) {
+                  console.log('otp update check', error);
+                } else {
+                  console.log('otp update check2', result);
+                  document.location.href="/dashboard";
+                }
+              });
+            return this.setState({error: ''});
+           } else {
+            return this.setState({error: 'Invalid Otp match'});
+           }
         }
        });
+   
       // const otpCall = 
       // console.log('otpCall',otpCall);
       // check fro correct o5p from db
@@ -60,7 +83,6 @@ export default class Otp extends React.Component {
             <h1>Otp</h1>
   
             {this.state.error ? <p>{this.state.error}</p> : undefined}
-  
             <form onSubmit={this.onSubmit.bind(this)} noValidate className="boxed-view__form">
               <input type="number" ref="otp" name="otp"  maxLength="5" placeholder="OTP"/>
               <button className="button">Confirm</button>

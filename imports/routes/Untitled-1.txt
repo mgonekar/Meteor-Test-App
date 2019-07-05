@@ -11,7 +11,10 @@ import NotFound from '../ui/NotFound';
 import Login from '../ui/Login';
 import Test from '../ui/Test';
 import Otp from '../ui/OTP';
-import AddMember from '../ui/AddMembers';
+
+const unauthenticatedPages = ['/', '/signup'];
+const authenticatedPages = ['/dashboard','/test','otp'];
+
 
 // const onEnterNotePage = (nextState) => {
 //   Session.set('selectedNoteId', nextState.params.id);
@@ -22,7 +25,6 @@ import AddMember from '../ui/AddMembers';
 
 const publicPage = function  () {
   if (Meteor.userId()) {
-    console.log('publicPage', publicPage);
     browserHistory.replace('/dashboard');
   }
 };
@@ -59,7 +61,6 @@ export const routes = (
           <Route exact path = "/signup" component={Signup} privacy="unauth" onEnter={publicPage}/>
           <Route exact path = "/dashboard" component={Dashboard} privacy="auth" onEnter={privatePage}/>
           <Route exact path = "/otp" component={Otp} privacy="auth" onEnter={privatePage}/>
-          <Route exact path = "/add" component={AddMember} privacy="auth" onEnter={privatePage} />
           <Route exact path = "/test" component={Test} privacy="auth" onEnter={privatePage} />
           <Route component={NotFound}/>
         </Switch>
@@ -68,85 +69,74 @@ export const routes = (
 );
 
 export const onAuthChange = function (authenticated) {
-   otpisVerified = false;
+  let otpisVerified = false;
   console.log("isAuthenticated: ", authenticated);
   const path = browserHistory.location.pathname;
-  console.log('path--', path);
-  if(authenticated) {
+  const isUnauthenticatedPage = unauthenticatedPages.includes(path);
+  const isAuthenticatedPage = authenticatedPages.includes(path);
+  console.log('path', path);
+  console.log('authenticated--',authenticated);
+  console.log('isUnauthenticatedPage--',isUnauthenticatedPage);
+  
+  Meteor.call('checkOtp', (error, result) => {
+    if(error) {
+      console.log('otp error check', error);
+      // document.location.href="/";
+    } else {
+      console.log('otp update check isVerified', result.toString());
+      otpisVerified = result.toString();
+      if(authenticated) {
 
-    Meteor.call('checkOtp', (error, result) => {
-      if(error) {
-        console.log('otp error check', error);
-      } else {
-        console.log('otp update check isVerified', result.toString());
-        otpisVerified = result.toString();
-
-        if(otpisVerified == "true" && path === '/'){
-          browserHistory.replace('/dashboard');
+        if(path === '/' || path === '/otp') {
+         console.log('otp error check path', otpisVerified);
+         if(otpisVerified === "true") {
+           browserHistory.replace('/dashboard');
         }
-        if(otpisVerified == "true" && path === '/otp'){
-          browserHistory.replace('/dashboard');
-        }
-        // if(otpisVerified == "false" && path === '/'){
-        //   browserHistory.replace('/otp');
-        // }
-        if(otpisVerified == "false"){
-          browserHistory.replace('/otp');
-        }
-      }
-    });
-
-  } else {
-    if(path === '/signup') {
-      browserHistory.replace('/signup');
-    } else  {
-      browserHistory.replace('/');
+       }
+       //  if(path==='/') {
+       //   if(otpisVerified === false) {
+       //     browserHistory.replace('/otp');
+       //  }
+       // }
+         
+   
+         // browserHistory.replace('/otp');
+       }
     }
-}
+   });
 
-};
-
-  //  if(authenticated) {
-
-  //   if(path === '/' || path === '/otp') {
-  //    console.log('otp error check path', otpisVerified);
-  //    if(otpisVerified === "true") {
-  //      browserHistory.replace('/dashboard');
-  //   }
-  //  }
-  //  }
   
   
-//   if (authenticated && isUnauthenticatedPage) {
-//       console.log(`Authenticated user routed to the path /dashboard`);
-//       if(path==='/') {
-//         if(otpisVerified === false) {
-//           browserHistory.replace('/otp');
-//         } 
-//         if(otpisVerified === true) {
-//           browserHistory.replace('/dashboard');
-//         } 
+  if (authenticated && isUnauthenticatedPage) {
+      console.log(`Authenticated user routed to the path /dashboard`);
+      if(path==='/') {
+        if(otpisVerified === false) {
+          browserHistory.replace('/otp');
+        } 
+        if(otpisVerified === true) {
+          browserHistory.replace('/dashboard');
+        } 
         
-//       }
-//       if(path==='/otp') {
-//         if(otpisVerified === false) {
-//           browserHistory.replace('/otp');
-//         } 
-//         if(otpisVerified === true) {
-//           browserHistory.replace('/dashboard');
-//         } 
+      }
+      if(path==='/otp') {
+        if(otpisVerified === false) {
+          browserHistory.replace('/otp');
+        } 
+        if(otpisVerified === true) {
+          browserHistory.replace('/dashboard');
+        } 
         
-//       }
-//       if(path==='/signup') {
-//         browserHistory.replace('/otp');
-//       }
-//   } else if (!authenticated && isAuthenticatedPage) {
-//       console.log(`Unauthenticated user routed to the path /`);
-//       if(path ==='/signup') {
-//         browserHistory.replace('/signup');
-//       } else {
-//         browserHistory.replace('/');
-//       }
+      }
+      if(path==='/signup') {
+        browserHistory.replace('/otp');
+      }
+  } else if (!authenticated && isAuthenticatedPage) {
+      console.log(`Unauthenticated user routed to the path /`);
+      if(path ==='/signup') {
+        browserHistory.replace('/signup');
+      } else {
+        browserHistory.replace('/');
+      }
       
-//   }
-// };
+  }
+};

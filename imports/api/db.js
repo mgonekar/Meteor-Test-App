@@ -21,18 +21,49 @@ Meteor.methods({
         return Otp.insert({
             otp,
             userId: this.userId,
-            updatedAt: moment().valueOf()
+            updatedAt: moment().valueOf(),
+            isVerified: false
         });
     },
-    'find-otp' (otp) {
-        // if(!this.userId) {
-        //     throw new Meteor.Error('not-authorized');
-        //  }
-         console.log('otpcheck', otp);
-         return true;
-        //  return Otp.find({
+    'find-otp' () {
+        if(!this.userId) {
+            throw new Meteor.Error('not-authorized');
+         }
+          return Otp.find({
+            userId: this.userId
+         }).fetch().map( (otp) => {
+            return otp.otp
+         });
+    },
+    'update-otp' () {
+        if(!this.userId) {
+            throw new Meteor.Error('not-authorized');
+         }
+
+         Otp.update({
+            userId: this.userId
+        },{
+            $set:{ isVerified: true }
+        });
+
+        //  Otp.update(userId:this.userId,
+        //     { $set: { isVerified: true } });
+        //  Tasks.update(taskId,
+        //      { $set: { checked: setChecked } });
+        //   Otp.update({
         //     userId: this.userId
-        //  });
+        //  }),{$set: {"isVerified": "true"}}
+    },
+    'checkOtp' () {
+        if(!this.userId) {
+            throw new Meteor.Error('not-authorized');
+         }
+
+         return Otp.find({
+            userId: this.userId
+         }).fetch().map( (isVerified) => {
+            return isVerified.isVerified
+         });
     }
 
 });
