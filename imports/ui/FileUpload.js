@@ -26,7 +26,9 @@ class FileUploadComponent extends Component {
     e.preventDefault();
 
     let self = this;
-
+    console.log("fileupload24",e.currentTarget.files);
+    return false;
+    // return false;
     if (e.currentTarget.files && e.currentTarget.files[0]) {
       // We upload only one file, in case
       // there was multiple files selected

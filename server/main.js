@@ -5,6 +5,7 @@ import moment from 'moment';
 import '../imports/api/users';
 import '../imports/api/db';
 import '../imports/api/files.js';
+import '../imports/api/usersdb';
 
 Meteor.startup(() => {
    

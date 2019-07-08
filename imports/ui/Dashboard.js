@@ -20,80 +20,91 @@ class Dashboard extends Component {
             progress: 0,
             inProgress: false,
             imgFileId: "",
-            error: ''
+            error: '',
+            kUserrId: null
         };
 
-        // this.uploadIt = this.uploadIt.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
       }
-
-    onSubmit(e) {
-      e.preventDefault();
-    //   let name  = this.refs.name.value.trim();
-    //   let surname  = this.refs.surname.value.trim();
-    // //   let Mnumber  = this.refs.mobile.value.trim();
-    //   let adharcard  = this.refs.adharcard.value.trim();
-    //   let addess  = this.refs.addess.value.trim();
-    //   let Mnumber  = this.refs.mob.value.trim();
-    //   let landsize  = this.refs.landsize.value.trim();
-    //   let tags  = this.refs.tags.value.trim();
-    //   let product  = this.refs.product.value.trim();
-    // //   let Mnumber  = this.refs.mobile.value.trim();
-
-    // if (name.length < 4) {
-    //     return this.setState({error: 'Name must Be 3 char long'});
-    //   }
-    //   if (surname.length < 4) {
-    //     return this.setState({error: 'Surname must Be 3 char long'});
-    //   }
-    //   if(adharcard.length !== 0) {
-    //     if (adharcard.length == 12) {
-    //             return this.setState({error: 'Adharcard must number Be 12 char long'});
-    //         }
-    //   }
       
-    //   if(addess.length !== 0) {
-    //     if (addess.length == 4) {
-    //             return this.setState({error: 'Address must Be 3 char long'});
-    //         }
-    //   }
-    //   if(Mnumber.length !== 0) {
+    onSubmit(e) {
+        var  kUserrId = null;
+      e.preventDefault();
+      let name  = this.refs.name.value.trim();
+      let surname  = this.refs.surname.value.trim();
+    //   let Mnumber  = this.refs.mobile.value.trim();
+      let adharcard  = this.refs.adharcard.value.trim();
+      let addess  = this.refs.addess.value.trim();
+      let Mnumber  = this.refs.mob.value.trim();
+      let landsize  = this.refs.landsize.value.trim();
+      let tags  = this.refs.tags.value.trim();
+      let product  = this.refs.product.value.trim();
+    //   let Mnumber  = this.refs.mobile.value.trim();
+
+    if (name.length < 4) {
+        return this.setState({error: 'Name must Be 3 char long'});
+      }
+      if (surname.length < 4) {
+        return this.setState({error: 'Surname must Be 3 char long'});
+      }
+      if(adharcard.length !== 0) {
+        if (adharcard.length !== 12) {
+                return this.setState({error: 'Adharcard must number Be 12 char long'});
+            }
+      }
+      
+      if(addess.length !== 0) {
+        if (addess.length == 4) {
+                return this.setState({error: 'Address must Be 3 char long'});
+            }
+      }
+      if(Mnumber.length !== 0) {
+        if (Mnumber.length == 10) {
+                return this.setState({error: 'Mobile no must Be 3 char long'});
+            }
+            if(!Mnumber.match(/^-{0,1}\d+$/)){
+                return this.setState({error: 'Invalid Mobile number'});
+              }
+      }
+    //   if(landsize.length !== 0) {
     //     if (Mnumber.length == 10) {
     //             return this.setState({error: 'Mobile no must Be 3 char long'});
     //         }
-    //         if(!Mnumber.match(/^-{0,1}\d+$/)){
-    //             return this.setState({error: 'Invalid Mobile number'});
-    //           }
     //   }
-    // //   if(landsize.length !== 0) {
-    // //     if (Mnumber.length == 10) {
-    // //             return this.setState({error: 'Mobile no must Be 3 char long'});
-    // //         }
-    // //   }
-    // if(tags.length !== 0) {
-    //     if (tags.length > 3) {
-    //             return this.setState({error: '#tags no must Be 3 char long'});
-    //         }
-    //   }
-    //   if(product.length !== 0) {
-    //     if (product.length > 3) {
-    //             return this.setState({error: 'Product no must Be 3 char long'});
-    //         }
-    //   }
+    if(tags.length !== 0) {
+        if (tags.length > 3) {
+                return this.setState({error: '#tags no must Be 3 char long'});
+            }
+      }
+      if(product.length !== 0) {
+        if (product.length > 3) {
+                return this.setState({error: 'Product no must Be 3 char long'});
+            }
+      }
     
-    //   if(!this.state.error) {
+      if(!this.state.error) {
+
+        Meteor.call('Add Kiasn data', name,surname,
+        adharcard,addess,Mnumber,landsize,tags,product,
+        (error, result) => {
+            if(error){
+                console.log("Add Kiasn data error ", error);
+            } else {
+              console.log("Add Kiasn data res ", result);
+              this.setState({kUserrId:result});
+              console.log('kUserrId',this.state.kUserrId);
         let self = this;
-        console.log("fileupload2",e.currentTarget.file);
-        if (e.currentTarget.files && e.currentTarget.files[0]) {
+        console.log("fileupload24e",e.target.querySelector('#fileinput').files[0]);
+        if (e.target.querySelector('#fileinput').files && e.target.querySelector('#fileinput').files[0]) {
           // We upload only one file, in case
           // there was multiple files selected
-          var file = e.currentTarget.files[0];
-            console.log("fileupload",file);
+          var file = e.target.querySelector('#fileinput').files[0];
+            // console.log("fileupload",file);
           if (file) {
-              alert("sdds");
             let uploadInstance = UserFiles.insert({
               file: file,
               meta: {
-                locator: self.props.fileLocator,
+                // locator: self.props.fileLocator,
                 userId: Meteor.userId() // Optional, used to check on server for file tampering
               },
               streams: 'dynamic',
@@ -144,17 +155,14 @@ class Dashboard extends Component {
             uploadInstance.start(); // Must manually start the upload
           }
         }
-    //   }
+            }
+        });
+        // return false;
+        
+        
+      }
 
-    //   Meteor.call('Add Kiasn data', name,surname,
-    //   adharcard,addess,Mnumber,landsize,tags,product,
-    //   (error, result) => {
-    //       if(error){
-    //           console.log("Add Kiasn data error ", error);
-    //       } else {
-    //         console.log("Add Kiasn data res ", result);
-    //       }
-    //   })
+      
       
     }
     render() {
@@ -211,7 +219,6 @@ class Dashboard extends Component {
       </div>
 
 
-            {/* <FileUploadComponent/> */}
             </div>
             <div className="column">
             {this.state.error ? <p>{this.state.error}</p> : undefined}
@@ -222,7 +229,7 @@ class Dashboard extends Component {
               <div className="file">
                 <label className="file-label">
                 <input type="file" id="fileinput" disabled={this.state.inProgress} ref="fileinput"
-                  />
+                  onChange={this.uploadIt}/>
                   <span className="file-cta">
                     <span className="file-icon">
                       <i className="fas fa-upload"></i>
@@ -236,7 +243,7 @@ class Dashboard extends Component {
             </div>
 
 
-                {/* <div className="field">
+                <div className="field">
                 <label className="label">Name</label>
                     <div className="control">
                         <input className="input" ref="name" name="name" type="text" placeholder="Medium input"/>
@@ -290,7 +297,7 @@ class Dashboard extends Component {
                     <div className="control">
                         <input className="input" ref="product" name="product" type="text" placeholder="Medium input"/>
                     </div>
-                </div> */}
+                </div>
 
 
             
