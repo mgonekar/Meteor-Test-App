@@ -8,7 +8,7 @@ export const userKisan   = new Mongo.Collection('userKisan');
 
 if(Meteor.isServer) {
     Meteor.publish('userKisan', function () {
-        return Otp.find({ userId: this.userId });
+        return userKisan.find({ userId: this.userId });
     });
 }
 
@@ -33,6 +33,7 @@ Meteor.methods({
             return docsInserted;
         });
     },
+    
     // 'find-otp' () {
     //     if(!this.userId) {
     //         throw new Meteor.Error('not-authorized');

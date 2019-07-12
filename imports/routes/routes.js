@@ -11,6 +11,7 @@ import NotFound from '../ui/NotFound';
 import Login from '../ui/Login';
 import Test from '../ui/Test';
 import Otp from '../ui/OTP';
+import Customers from '../ui/AllCustomers';
 import AddMember from '../ui/AddMembers';
 
 // const onEnterNotePage = (nextState) => {
@@ -59,6 +60,7 @@ export const routes = (
           <Route exact path = "/signup" component={Signup} privacy="unauth" onEnter={publicPage}/>
           <Route exact path = "/dashboard" component={Dashboard} privacy="auth" onEnter={privatePage}/>
           <Route exact path = "/otp" component={Otp} privacy="auth" onEnter={privatePage}/>
+          <Route exact path = "/allcustomer" component={Customers} privacy="auth" onEnter={privatePage} />
           <Route exact path = "/add" component={AddMember} privacy="auth" onEnter={privatePage} />
           <Route exact path = "/test" component={Test} privacy="auth" onEnter={privatePage} />
           <Route component={NotFound}/>

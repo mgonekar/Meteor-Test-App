@@ -2,7 +2,8 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Meteor } from 'meteor/meteor';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import 'bulma/css/bulma.css'
+import 'bulma/css/bulma.css';
+import Webcam from "react-webcam";
 
 import PrivateHeader from './PrivateHeader';
 import FileUploadComponent from "./FileUpload";
@@ -21,10 +22,60 @@ class Dashboard extends Component {
             inProgress: false,
             imgFileId: "",
             error: '',
-            kUserrId: null
+            kUserrId: null,
+            imageData: null,
+            image_name: "",
+            saveImage: false
         };
 
         this.onSubmit = this.onSubmit.bind(this);
+      }
+
+      setRef = webcam => {
+        this.webcam = webcam;
+      };
+     
+      capture = () => {
+        const imageSrc = this.webcam.getScreenshot();
+        this.setState({ imageData: imageSrc});
+      };
+
+      onClickRetake = (e) => {
+          e.persist();
+          this.setState({imageData: null});
+      }
+      onClickSave = (e) => {
+        e.persist();
+        this.setState({
+            [e.target.name] : e.target.value
+        })
+      }
+
+      handleSaveSubmit = (e) => {
+          e.preventDefault();
+          let imageObject = {
+              image_name: this.state.image_name,
+              jod_id: this.props.job.id,
+              image_data: this.state.imageData
+          }
+          this.props.saveJobImage(ImageObject)
+      }
+
+      saveForm = () => {
+          return(
+              <div>
+                  <form onSubmit={this.handleSaveSubmit}>
+                      <p>
+                          <label>Image Name</label>
+                          <input type="text"
+                          name="image_name"
+                          value={this.state.image_name}
+                          onChange={this.handleChange}/>
+                          <input type="submit" value="Save" />
+                      </p>
+                  </form>
+              </div>
+          )
       }
       
     onSubmit(e) {
@@ -83,7 +134,7 @@ class Dashboard extends Component {
       }
     
       if(!this.state.error) {
-
+        e.persist();
         Meteor.call('Add Kiasn data', name,surname,
         adharcard,addess,Mnumber,landsize,tags,product,
         (error, result) => {
@@ -91,6 +142,7 @@ class Dashboard extends Component {
                 console.log("Add Kiasn data error ", error);
             } else {
               console.log("Add Kiasn data res ", result);
+              let kUserrId = result;
               this.setState({kUserrId:result});
               console.log('kUserrId',this.state.kUserrId);
         let self = this;
@@ -99,18 +151,24 @@ class Dashboard extends Component {
           // We upload only one file, in case
           // there was multiple files selected
           var file = e.target.querySelector('#fileinput').files[0];
-            // console.log("fileupload",file);
+            console.log("fileupload",file);
           if (file) {
+            var uploadimgId = '';
             let uploadInstance = UserFiles.insert({
               file: file,
               meta: {
-                // locator: self.props.fileLocator,
+                kUserrId,
+                locator: self.props.fileLocator,
                 userId: Meteor.userId() // Optional, used to check on server for file tampering
               },
               streams: 'dynamic',
               chunkSize: 'dynamic',
               allowWebWorkers: true // If you see issues with uploads, change this to false
-            }, false)
+            }, function(err,uploadimgId){
+              uploadimgId = uploadimgId;
+              console.log(uploadimgId);
+              debugger;
+          },false)
     
             self.setState({
               uploading: uploadInstance, // Keep track of this instance to use below
@@ -153,7 +211,26 @@ class Dashboard extends Component {
             });
     
             uploadInstance.start(); // Must manually start the upload
+
+            Meteor.call('Add Image data',null,kUserrId, uploadimgId, (error, result) => {
+              if(error){
+                  console.log("Add Kiasn data error ", error);
+              } else {
+                  console.log("Add image data res ", result);
+              }
+          });
           }
+        } else {
+            // console.log("Add  data error---- ", this.state.imageData);
+            if(this.state.imageData) {
+                Meteor.call('Add Image data',this.state.imageData,kUserrId, null, (error, result) => {
+                    if(error){
+                        console.log("Add Kiasn data error ", error);
+                    } else {
+                        console.log("Add image data res ", result);
+                    }
+                });
+            }
         }
             }
         });
@@ -166,6 +243,11 @@ class Dashboard extends Component {
       
     }
     render() {
+        const videoConstraints = {
+            width: 1280,
+            height: 720,
+            facingMode: "user"
+          };
         // debug("Rendering FileUpload",this.props.docsReadyYet);
     if (this.props.files && this.props.docsReadyYet) {
 
@@ -193,7 +275,23 @@ class Dashboard extends Component {
             <PrivateHeader title= 'Dashboard'/>
             <Searchbox/>
             <Card/>
-            
+            <div>
+                <Webcam
+                audio={false}
+                height={350}
+                ref={this.setRef}
+                screenshotFormat="image/jpeg"
+                width={350}
+                videoConstraints={videoConstraints}
+                />
+                <button onClick={this.capture}>Capture photo</button>
+                <div>
+                    <p><img src={this.state.imageData} alt=""/></p>
+                    <span><button onClick={this.onClickRetake}>Reatake?</button></span>
+                    <span><button onClick={this.onClickSave}>save</button></span>
+                    {this.state.saveImage ? this.saveForm(): null}
+                </div>
+            </div>
             <div className="page-content">
                 {/* <NoteList/> */}
             </div>

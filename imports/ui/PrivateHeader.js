@@ -10,7 +10,7 @@ export const PrivateHeader = (props) => {
           <div className="header__content">
             <h1 className="header__title">{props.title}</h1>
             <ul>
-              <li><Link to="/Add">Add</Link></li>
+              <li><Link to="/allcustomer">All</Link></li>
               <li><Link to="/signup">Images</Link></li>
               <li><Link to="/signup">Need an account?</Link></li>
             </ul>
