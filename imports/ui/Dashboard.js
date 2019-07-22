@@ -105,12 +105,12 @@ class Dashboard extends Component {
       }
       
       if(addess.length !== 0) {
-        if (addess.length == 4) {
+        if (addess.length < 4) {
                 return this.setState({error: 'Address must Be 3 char long'});
             }
       }
       if(Mnumber.length !== 0) {
-        if (Mnumber.length == 10) {
+        if (Mnumber.length !== 10) {
                 return this.setState({error: 'Mobile no must Be 3 char long'});
             }
             if(!Mnumber.match(/^-{0,1}\d+$/)){
@@ -123,12 +123,12 @@ class Dashboard extends Component {
     //         }
     //   }
     if(tags.length !== 0) {
-        if (tags.length > 3) {
+        if (tags.length < 3) {
                 return this.setState({error: '#tags no must Be 3 char long'});
             }
       }
       if(product.length !== 0) {
-        if (product.length > 3) {
+        if (product.length < 3) {
                 return this.setState({error: 'Product no must Be 3 char long'});
             }
       }
@@ -221,7 +221,7 @@ class Dashboard extends Component {
           });
           }
         } else {
-            // console.log("Add  data error---- ", this.state.imageData);
+            // if image captured from webcamera store kisanid with image
             if(this.state.imageData) {
                 Meteor.call('Add Image data',this.state.imageData,kUserrId, null, (error, result) => {
                     if(error){

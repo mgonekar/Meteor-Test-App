@@ -7,6 +7,9 @@ import '../imports/api/db';
 import '../imports/api/files.js';
 import '../imports/api/userKisan';
 import '../imports/api/imageData';
+import '../imports/api/allSmsdb';
+import '../imports/api/commonSmsCollection';
+import '../imports/api/sms';
 
 Meteor.startup(() => {
    

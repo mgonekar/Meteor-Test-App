@@ -6,14 +6,35 @@ import random from 'random';
 import moment from 'moment';
 import { withTracker } from 'meteor/react-meteor-data';
 
+const nexmo = new Nexmo({
+  apiKey: 'apiKey',
+  apiSecret: "apiSecret",
+},{debug:true});
+
+Meteor.methods({
+  'Send to all'(mob,text) {
+      // let from = 1234;
+      // nexmo.message.sendSms(from, mob, text, (err, responseData) => {
+      //       if (err) {
+      //           console.log(err);
+      //       } else {
+      //           if(responseData.messages[0]['status'] === "0") {
+      //               console.log("Message sent successfully.");
+      //           } else {
+      //               console.log(`Message failed with error: ${responseData.messages[0]['error-text']}`);
+      //           }
+      //       }
+      //   })
+      // return "sucess";
+      console.log("Sms sent");
+    
+  },
+})
 
 export const newSms = (from, to) => {
 
   // Meteor.call('users.insertotp', 44444);
-    const nexmo = new Nexmo({
-        apiKey: 'apiKey',
-        apiSecret: "apiSecret",
-      },{debug:true});
+    
 
     //   const from = from;
     //     const to = to;
@@ -34,6 +55,8 @@ export const newSms = (from, to) => {
             console.log('otp res check', result);
           }
          });
+         
+         
         // nexmo.message.sendSms(from, to, text, (err, responseData) => {
         //     if (err) {
         //         console.log(err);

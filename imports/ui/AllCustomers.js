@@ -3,8 +3,9 @@ import { withTracker } from 'meteor/react-meteor-data';
 import 'bulma/css/bulma.css';
 
 import {imageDatadb} from '../api/imageData';
-import {userKisan}   from '../api/userKisan';
+import {userKisandb}   from '../api/userKisan';
 import PrivateHeader from './PrivateHeader';
+import SendSms from './SendSms';
 
  class AllCustomers extends React.Component {
     constructor(props) {
@@ -16,32 +17,33 @@ import PrivateHeader from './PrivateHeader';
     }
     
     render() {
-      console.log('docsReadyYet',this.props.userKisan);
-      let fileCursors = this.props.userKisan;
+      let kdataCursor = this.props.userKisan;
   
-        let display = fileCursors.map((id, key) => {
-          console.log('aaaaa',id._id);
-
-    Meteor.call('Find data by Id ', id._id,(error, result) => {
-      if(error){
-          console.log("Add Kiasn data error ", error);
-      } else {
-          console.log("ksan res ", result);
-      }
-    });
+        // Run through each file that the user has stored
+        // (make sure the subscription only sends files owned by this user)
+        let display = kdataCursor.map((data, key) => {
+          let kdata = imageDatadb.find({kUserrId:data._id}).fetch().map((imgdata, key) => {
+            return <div key={key}><img src={imgdata.imageData}/></div>
+          })
           
-          // let kdata = userKisan.find({ }).fetch(); // if i replace userKisan with imageDatadb this works
-          // console.log('kdata',kdata);
-
           return <div key={key}>
-            <img src={img.imageData}/>
-            {/* {kdata} */}
+            {kdata}
+            <div>{data.name}</div>
+            <div>{data.surname}</div>
+            <div>{data.adharcard}</div>
+            <div>{data.addess}</div>
+            <div>{data.Mnumber}</div>
+            <div>{data.landsize}</div>
+            <div>{data.tags}</div>
+            <div>{data.product}</div>
+            <button>Send</button>
           </div>
         })
       return (
         <div>
             <PrivateHeader title= 'All'/>
-            {/* <image src=""/> */}
+            <h2>Send Messages to all.</h2>
+            <div><SendSms/></div>
             {display}
         </div>
       );
@@ -49,12 +51,17 @@ import PrivateHeader from './PrivateHeader';
   }
 
   export default withTracker( ( props ) => {
-    const filesHandle = Meteor.subscribe('userKisan');
+    const filesHandle = Meteor.subscribe('All image data');
     const docsReadyYet = filesHandle.ready();
-    const userKisan = userKisan.find({}).fetch();
-  
+    const imageData = imageDatadb.find({}).fetch();
+
+    const filesHandle1 = Meteor.subscribe('All userKisan data');
+    const docsReadyYet1 = filesHandle1.ready();
+    const userKisan = userKisandb.find({}).fetch();
     return {
       docsReadyYet,
-      userKisan,
+      imageData,
+      docsReadyYet1,
+      userKisan
     };
   })(AllCustomers);
