@@ -60,9 +60,9 @@ Meteor.methods({
                                 //get inserted data id
                                 //allSmsdb
                                 if(err){
-                                    console.log("Insert All sms data", err);
+                                    console.log("Insert All sms data error", err);
                                   } else {
-                                    console.log("Insert All sms data sucess ",counter);
+                                    console.log("Insert All sms data sucess counter ",counter);
                                     // console.log("Insert All sms data sucess", resp);
                                     //insert all sms id and kdta id
                                     counter++;

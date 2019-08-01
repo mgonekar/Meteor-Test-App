@@ -25,8 +25,8 @@ Meteor.methods({
       //           }
       //       }
       //   })
-      // return "sucess";
-      console.log("Sms sent");
+      return "sucess";
+      // console.log("Sms sent");
     
   },
 })
