@@ -12,7 +12,7 @@
     "bulma": "^0.7.5",
     "history": "^4.9.0",
     "meteor-node-stubs": "^0.4.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "nexmo": "^2.4.1",
     "random": "^2.1.1",
     "react": "^16.8.6",
